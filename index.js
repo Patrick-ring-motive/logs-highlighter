@@ -114,11 +114,15 @@
               -1px -1px 0 ${textShadow},
                1px -1px 0 ${textShadow},
               -1px  1px 0 ${textShadow},
-               1px  1px 0 ${textShadow};
+               1px  1px 0 ${textShadow} !important;
         }
         code{
           background-image: linear-gradient(lightgrey, lightgrey), url("your-image.png");
           background-blend-mode: darken;
+        }
+
+        code span{
+          --display:block !important;
         }
 
     `);
@@ -161,6 +165,7 @@
                     fragment.appendChild(span);
                     lastIndex = regex.lastIndex;
                     hasChanges = true;
+                    textNode.parentElement.style.display = 'block';
                 }
                 fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
 
