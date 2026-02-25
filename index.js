@@ -106,6 +106,18 @@
               -1px  1px 0 ${textShadow},
                1px  1px 0 ${textShadow};
         }
+       :is(a,a *):has(.highlight-nums,.non-alpha),
+       :is(a,a *):has(.highlight-nums,.non-alpha) :not(.highlight-nums,.non-alpha){
+            color: #5fe6ff !important;
+            text-shadow:
+              -1px -1px 0 ${textShadow},
+               1px -1px 0 ${textShadow},
+              -1px  1px 0 ${textShadow},
+               1px  1px 0 ${textShadow};
+            --background-image: linear-gradient(lightgrey, lightgrey), url("your-image.png");
+            background-blend-mode: darken !important;
+            white-space:nowrap;
+        }
         .token.string { color: #e6db74 !important; }
         .token.comment { color: #75715e !important; }
         code,pre>code[class*=language-]{
@@ -148,6 +160,18 @@
             const bkColor = `rgba(255,255,255,0.0)`;
 
         nodes.forEach(textNode => {
+            // Pretty-print JSON if the text looks like a JSON object or array
+            const trimmed = textNode.nodeValue.trim();
+            if ((trimmed.startsWith('{') && trimmed.endsWith('}')) || (trimmed.startsWith('[') && trimmed.endsWith(']'))) {
+                try {
+                    const parsed = JSON.parse(trimmed);
+                    const pretty = JSON.stringify(parsed, null, 2);
+                    if (pretty !== trimmed) {
+                        textNode.nodeValue = pretty;
+                    }
+                } catch {}
+            }
+
             const text = textNode.nodeValue;
             if (regex.test(text)) {
               //  (textNode.parentElement?.style??{}).backgroundColor = bkColor;
@@ -165,7 +189,9 @@
                     fragment.appendChild(span);
                     lastIndex = regex.lastIndex;
                     hasChanges = true;
-                    textNode.parentElement.style.display = 'block';
+                    if(!textNode.parentElement.matches('td,td *,[style*="relative"] *') && !String(textNode.parentElement.className).includes('token')){
+                        textNode.parentElement.style.display = 'block';
+                    }
                 }
                 fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
 
