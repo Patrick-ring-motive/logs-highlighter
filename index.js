@@ -220,7 +220,7 @@
                 } catch {}
             }
 
-            const text = textNode.nodeValue;
+            const text = String(textNode.nodeValue).normalize('NFD');
             // Skip nodes whose computed text color is white, black, or grey
             // if (textNode.parentElement.tagName !== 'A' && !isAchromatic(textNode.parentElement)) return;
             if (regex.test(text)) {
@@ -230,10 +230,11 @@
                 let match;
                 let hasChanges = false;
                 regex.lastIndex = 0;
-
+                if(textNode.parentElement.dataset.colored)return;
                 while ((match = regex.exec(text)) !== null) {
                     fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
                     const span = document.createElement('span');
+                    span.dataset.colored = true;
                     span.className = symClass(match[0]);
                     span.textContent = match[0];
                     fragment.appendChild(span);
