@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         Logs Highlighter
 // @namespace    http://tampermonkey.net/
-// @version      1.6
-// @description  Higlight Any Logs
+// @version      1.7
+// @description  Highlight Any Logs
 // @author       Gemini and Me
-// @match        https://*/*
+// @match        *://*/*
+// @run-at       document-end
 // @grant        GM_addStyle
 // @grant        GM_getResourceText
 // @require      https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js
@@ -13,7 +14,9 @@
 // ==/UserScript==
 
 (function() {
+    console.log('Starting Syntax Higlighter');
     'use strict';
+    if(location.href.includes('pull-requests?create'))return;
     document.firstElementChild.dataset.origin = location.origin;
     const Q = fn => {
       try {
@@ -98,6 +101,17 @@
               -1px  1px 0 ${textShadow},
                1px  1px 0 ${textShadow};
         }
+        .sym-paren  { color: #ffff00 !important; } /* ( )  — yellow */
+        .sym-curly  { color: #ff79c6 !important; } /* { }  — pink   */
+        .sym-square { color: #ba7dff !important; } /* [ ]  — purple   */
+        .sym-quote  { color: #ffff00 !important; } /* ' " \` — yellow */
+        .sym-paren, .sym-curly, .sym-square, .sym-quote {
+            text-shadow:
+              -1px -1px 0 ${textShadow},
+               1px -1px 0 ${textShadow},
+              -1px  1px 0 ${textShadow},
+               1px  1px 0 ${textShadow};
+        }
         .highlight-nums {
             color: deepskyblue !important;
             text-shadow:
@@ -106,8 +120,8 @@
               -1px  1px 0 ${textShadow},
                1px  1px 0 ${textShadow};
         }
-       :is(a,a *):has(.highlight-nums,.non-alpha),
-       :is(a,a *):has(.highlight-nums,.non-alpha) :not(.highlight-nums,.non-alpha){
+       :is(a,a *):has(.highlight-nums,.non-alpha,.sym-paren,.sym-curly,.sym-square,.sym-quote),
+       :is(a,a *):has(.highlight-nums,.non-alpha,.sym-paren,.sym-curly,.sym-square,.sym-quote) :not(.highlight-nums,.non-alpha,.sym-paren,.sym-curly,.sym-square,.sym-quote){
             color: #5fe6ff !important;
             text-shadow:
               -1px -1px 0 ${textShadow},
@@ -139,6 +153,33 @@
 
     `);
 
+    // Returns true if the color is approximately achromatic (white, black, or grey)
+    const isAchromatic = (el) => {
+        if (!el) {
+           // console.log(el);
+            return false;
+        }
+        const color = getComputedStyle(el).color;
+        //console.log(color);
+        // oklch(L C H) — achromatic when chroma C is near 0
+        const oklchMatch = color.match(/oklch\(([\d.]+)\s+([\d.]+)\s+([\d.]+)/);
+        if (oklchMatch) {
+            const chroma = parseFloat(oklchMatch[2]);
+            return chroma < 0.08;
+        }
+
+        // rgb/rgba — achromatic when R ≈ G ≈ B (each within 80% of the next)
+        const rgbMatch = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+        if (rgbMatch) {
+            const channels = rgbMatch.slice(1).map(Number).sort((a, b) => b - a); // [high, mid, low]
+            const [high, mid, low] = channels;
+            if (high === 0) return true; // pure black
+            return (mid / high) >= 0.8 && (low / (mid || 1)) >= 0.8;
+        }
+
+        return false;
+    };
+
     // Decoupled Symbol Highlighter
     const glowSymbols = (root) => {
         if (!root) return;
@@ -158,6 +199,13 @@
             const regex = /([^a-zA-Z0-9\s])/g;
             const numRegex = /([0-9]+)/g;
             const bkColor = `rgba(255,255,255,0.0)`;
+            const symClass = (ch) => {
+                if ('()'.includes(ch))       return 'sym-paren';
+                if ('{}'.includes(ch))       return 'sym-curly';
+                if ('[]'.includes(ch))       return 'sym-square';
+                if (`'"\`‘’“”`.includes(ch)) return 'sym-quote';
+                return 'non-alpha';
+            };
 
         nodes.forEach(textNode => {
             // Pretty-print JSON if the text looks like a JSON object or array
@@ -173,6 +221,8 @@
             }
 
             const text = textNode.nodeValue;
+            // Skip nodes whose computed text color is white, black, or grey
+            // if (textNode.parentElement.tagName !== 'A' && !isAchromatic(textNode.parentElement)) return;
             if (regex.test(text)) {
               //  (textNode.parentElement?.style??{}).backgroundColor = bkColor;
                 const fragment = document.createDocumentFragment();
@@ -184,13 +234,13 @@
                 while ((match = regex.exec(text)) !== null) {
                     fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
                     const span = document.createElement('span');
-                    span.className = 'non-alpha';
+                    span.className = symClass(match[0]);
                     span.textContent = match[0];
                     fragment.appendChild(span);
                     lastIndex = regex.lastIndex;
                     hasChanges = true;
-                    if(!textNode.parentElement.matches('td,td *,[style*="relative"] *') && !String(textNode.parentElement.className).includes('token')){
-                        textNode.parentElement.style.display = 'block';
+                    if(!textNode.parentElement.matches(':has(.pipeline-new-node),td,td *,[style*="relative"] *') && !String(textNode.parentElement.className).includes('token')){
+                        //textNode.parentElement.style.display = 'block';
                     }
                 }
                 fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
