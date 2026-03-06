@@ -142,7 +142,7 @@
               -1px  1px 0 ${textShadow},
                1px  1px 0 ${textShadow} !important;
         }
-        code{
+        html:not([class*="dark"]) code{
           background-image: linear-gradient(lightgrey, lightgrey), url("your-image.png");
           background-blend-mode: darken;
         }
@@ -190,7 +190,7 @@
         while (node = walker.nextNode()) {
             // Avoid re-processing or breaking scripts/styles
             const parent = node.parentElement;
-            if (parent?.tagName === 'SCRIPT' || parent?.tagName === 'STYLE' || parent?.classList.contains('non-alpha')) continue;
+            if (parent?.tagName === 'SCRIPT' || parent?.tagName === 'STYLE' || parent?.classList?.contains?.('non-alpha')) continue;
             nodes.push(node);
         }
 
