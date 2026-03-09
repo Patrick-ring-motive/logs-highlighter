@@ -74,6 +74,7 @@
         } else {
             const style = document.createElement('style');
             style.textContent = css;
+            style.onerror = e =>console.warn(e);
             document.head.appendChild(style);
         }
     };
@@ -81,9 +82,17 @@
     const loadPrism = () => new Promise((resolve) => {
         if (typeof Prism !== 'undefined') return resolve();
         const prismCSS = document.createElement('link');
+        Object.defineProperty(prismCSS,'onerror',{
+            get:()=>{},
+            set:()=>{}
+        });
+        Object.defineProperty(prismCSS,'onload',{
+            get:()=>{},
+            set:()=>{}
+        });
         prismCSS.rel = 'stylesheet';
         prismCSS.href = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css';
-        document.head.appendChild(prismCSS);
+       if(!/github\.com/.test(location.href)) document.head.appendChild(prismCSS);
 
         const prismCore = document.createElement('script');
         prismCore.src = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js';
@@ -93,7 +102,8 @@
             prismBash.onload = resolve;
             document.head.appendChild(prismBash);
         };
-        document.head.appendChild(prismCore);
+        prismCore.onerror = e =>console.warn(e);
+       if(!/github\.com/.test(location.href)) document.head.appendChild(prismCore);
     });
 
     if (isTampermonkey) {
