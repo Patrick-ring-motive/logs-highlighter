@@ -129,10 +129,9 @@
               -1px  1px 0 ${textShadow},
                1px  1px 0 ${textShadow};
         }
-        .sym-paren  { color: #ffff00 !important; } /* ( )  — yellow */
+        .sym-paren  { color: #ffff00 !important; } /* ( ) " — yellow */
         .sym-curly  { color: #ff79c6 !important; } /* { }  — pink   */
-        .sym-square { color: #ba7dff !important; } /* [ ]  — purple   */
-        .sym-quote  { color: #ffff00 !important; } /* ' " \` — yellow */
+        .sym-square { color: #ba7dff !important; } /* [ ] ' — purple   */
         .sym-paren, .sym-curly, .sym-square, .sym-quote {
             text-shadow:
               -1px -1px 0 ${textShadow},
@@ -232,10 +231,10 @@
             const numRegex = /([0-9]+)/g;
             const bkColor = `rgba(255,255,255,0.0)`;
             const symClass = (ch) => {
-                if ('()'.includes(ch))       return 'sym-paren';
+                if ('()“”"'.includes(ch))       return 'sym-paren';
                 if ('{}'.includes(ch))       return 'sym-curly';
-                if ('[]'.includes(ch))       return 'sym-square';
-                if (`'"\`‘’“”`.includes(ch)) return 'sym-quote';
+                if ('[]‘’\''.includes(ch))       return 'sym-square';
+                //if (`'"\`‘’“”"`.includes(ch)) return 'sym-quote';
                 return 'non-alpha';
             };
 
