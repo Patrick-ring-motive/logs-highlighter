@@ -14,9 +14,27 @@
 // ==/UserScript==
 
 (function() {
-    console.log('Starting Syntax Higlighter');
     'use strict';
+    console.log('Starting Syntax Higlighter');
     if(location.href.includes('pull-requests?create'))return;
+    const fcss = `:focus,focus-visible,:target,:open,:active,:hover,:current`;
+    const focusCSS = `${fcss},:has(${fcss}),:focus *,[contenteditable="true"],[contenteditable="true"] *`;
+    const matchesNode = (node,css) =>{
+        try{
+            node = node.nodeName == '#text' ? node.parentElement : node;
+            return node.matches(css);
+        }catch{
+            return false;
+        }
+    }
+    const isFocus = node =>{
+        if(matchesNode(node,focusCSS)){
+            if(node?.dataset?.touched ?? node?.parentElement?.dataset?.touched) return true;
+            (node?.dataset??{}).touched = true;
+            (node?.parentElement?.dataset??{}).touched = true;
+        }
+        return false;
+    };
     document.firstElementChild.dataset.origin = location.origin;
     const Q = fn => {
       try {
@@ -190,7 +208,11 @@
         while (node = walker.nextNode()) {
             // Avoid re-processing or breaking scripts/styles
             const parent = node.parentElement;
-            if (parent?.tagName === 'SCRIPT' || parent?.tagName === 'STYLE' || parent?.classList?.contains?.('non-alpha')) continue;
+            if (parent?.tagName === 'SCRIPT'
+             || parent?.tagName === 'STYLE'
+             || parent?.classList?.contains?.('non-alpha')
+             || matchesNode(node,`[contenteditable="true"],[contenteditable="true"] *`)
+             || isFocus(node)) continue;
             nodes.push(node);
         }
 
@@ -240,7 +262,9 @@
                     fragment.appendChild(span);
                     lastIndex = regex.lastIndex;
                     hasChanges = true;
-                    if(!textNode.parentElement.matches(':has(.pipeline-new-node),td,td *,[style*="relative"] *') && !String(textNode.parentElement.className).includes('token')){
+                    if(!textNode.parentElement.matches(':has(.pipeline-new-node),td,td *,[style*="relative"] *')
+                       && !textNode.parentElement.matches(focusCSS)
+                       && !String(textNode.parentElement.className).includes('token')){
                         //textNode.parentElement.style.display = 'block';
                     }
                 }
