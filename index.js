@@ -340,7 +340,7 @@
         // Find all possible containers
         const targets = [
            // document.body,
-            ...document.querySelectorAll('.run-output,.react-code-text,code,[class*="log-viewer"],.yaml-editor,.CodeMirror-lines,pre,html:not([data-origin*="jenkins"]) a,time,td'),
+            ...document.querySelectorAll('.run-output,.run-output *,.react-code-text,code,[class*="log-viewer"],.yaml-editor,.CodeMirror-lines,pre,html:not([data-origin*="jenkins"]) a,time,td'),
             document.querySelector('cloudbees-log-viewer-main'),
             document.querySelector('.log-viewer-container')
         ].filter(Boolean);
