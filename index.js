@@ -411,10 +411,10 @@
     await runEnhancement();
     while (true) {
       await waitNotBusy();
-      if (true
-     //   document.visibilityState === "visible" &&
-       // document.hidden !== true &&
-      //  document.readyState === "complete" &&
+      if (
+       document.visibilityState === "visible" &&
+       document.hidden !== true &&
+       document.readyState === "complete" 
       //  window.opener?.closed !== true &&
      //   window.outerHeight > 0 &&
      //   screen.availHeight > 0
