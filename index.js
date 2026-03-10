@@ -45,7 +45,7 @@
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   const postTask = (callback, options = {}) =>
     scheduler.postTask(callback, {
-    //  priority: "background",
+      priority: "background",
       ...options,
     });
 
@@ -53,7 +53,7 @@
     new Promise(async (resolve) => {
       await sleep(1);
       try {
-       // await new Promise((r) => postTask(r));
+        await new Promise((r) => postTask(r));
       } catch {}
       await sleep(1);
       try {
@@ -411,7 +411,7 @@
     await runEnhancement();
     while (true) {
       await waitNotBusy();
-      if (
+      if (true
      //   document.visibilityState === "visible" &&
        // document.hidden !== true &&
       //  document.readyState === "complete" &&
