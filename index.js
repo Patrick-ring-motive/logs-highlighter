@@ -17,7 +17,7 @@
   "use strict";
   console.log("Starting Syntax Higlighter");
   if (location.href.includes("pull-requests?create")) return;
-  const fcss = `:focus,focus-visible,:target,:open,:active,:hover,:current`;
+  const fcss = `:focus,focus-visible,:target`;
   const focusCSS = `${fcss},:has(${fcss}),:focus *,[contenteditable="true"],[contenteditable="true"] *`;
   const matchesNode = (node, css) => {
     try {
