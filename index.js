@@ -412,10 +412,10 @@
     while (true) {
       await waitNotBusy();
       if (
-        document.visibilityState === "visible" &&
-        document.hidden !== true &&
-        document.readyState === "complete" &&
-        window.opener?.closed !== true &&
+     //   document.visibilityState === "visible" &&
+       // document.hidden !== true &&
+      //  document.readyState === "complete" &&
+      //  window.opener?.closed !== true &&
      //   window.outerHeight > 0 &&
      //   screen.availHeight > 0
       ) {
