@@ -45,7 +45,7 @@
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   const postTask = (callback, options = {}) =>
     scheduler.postTask(callback, {
-      priority: "background",
+    //  priority: "background",
       ...options,
     });
 
