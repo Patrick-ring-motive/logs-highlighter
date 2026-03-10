@@ -416,8 +416,8 @@
         document.hidden !== true &&
         document.readyState === "complete" &&
         window.opener?.closed !== true &&
-        window.outerHeight > 0 &&
-        screen.availHeight > 0
+     //   window.outerHeight > 0 &&
+     //   screen.availHeight > 0
       ) {
         if (Date.now() - lastRun > interval) {
           lastRun = Date.now();
