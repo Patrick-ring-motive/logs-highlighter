@@ -15,6 +15,16 @@
 
 (function () {
   "use strict";
+
+  function isOnScreen(el) {
+  const rect = el.getBoundingClientRect();
+  return (
+    rect.top < window.innerHeight &&
+    rect.bottom > 0 &&
+    rect.left < window.innerWidth &&
+    rect.right > 0
+  );
+}
   console.log("Starting Syntax Higlighter");
   if (location.href.includes("pull-requests?create")) return;
   const fcss = `:focus,focus-visible,:target`;
@@ -243,7 +253,8 @@
           node,
           `[contenteditable="true"],[contenteditable="true"] *`,
         ) ||
-        isFocus(node)
+        isFocus(node) ||
+        !isOnScreen(parent)
       )
         continue;
       nodes.push(node);
