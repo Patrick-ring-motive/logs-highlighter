@@ -13,18 +13,18 @@
 // @resource     PRISM_CSS https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css
 // ==/UserScript==
 
-(function () {
+(function() {
   "use strict";
 
   function isOnScreen(el) {
-  const rect = el.getBoundingClientRect();
-  return (
-    rect.top < window.innerHeight &&
-    rect.bottom > 0 &&
-    rect.left < window.innerWidth &&
-    rect.right > 0
-  );
-}
+    const rect = el.getBoundingClientRect();
+    return (
+      rect.top < window.innerHeight &&
+      rect.bottom > 0 &&
+      rect.left < window.innerWidth &&
+      rect.right > 0
+    );
+  }
   console.log("Starting Syntax Higlighter");
   if (location.href.includes("pull-requests?create")) return;
   const fcss = `:focus,focus-visible,:target`;
@@ -423,12 +423,12 @@
     while (true) {
       await waitNotBusy();
       if (
-       document.visibilityState === "visible" &&
-       document.hidden !== true &&
-       document.readyState === "complete" 
-      //  window.opener?.closed !== true &&
-     //   window.outerHeight > 0 &&
-     //   screen.availHeight > 0
+        document.visibilityState === "visible" &&
+        document.hidden !== true &&
+        document.readyState === "complete"
+        //  window.opener?.closed !== true &&
+        //   window.outerHeight > 0 &&
+        //   screen.availHeight > 0
       ) {
         if (Date.now() - lastRun > interval) {
           lastRun = Date.now();
