@@ -103,6 +103,12 @@
 
   const textShadow = `rgba(0,0,0,1)`;
   addStyle(`
+    @media (prefers-color-scheme: light){
+      pre *{
+          text-shadow:none !important; 
+      }
+    }
+  
     html:not(:has(button[style*="grayscale"])){
         pre.console-output, .log-viewer-container {
             background: #1a1a1a !important;
