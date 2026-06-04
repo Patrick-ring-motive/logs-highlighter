@@ -76,12 +76,12 @@
   const waitNotBusy = () =>
     new Promise(async (resolve) => {
       await sleep(1);
-      try { await new Promise((r) => postTask(r)); } catch {}
-      await sleep(1);
-      try { if (window.requestIdleCallback) await new Promise((r) => requestIdleCallback(r)); } catch {}
-      await sleep(1);
-      try { await new Promise((r) => requestAnimationFrame(r)); } catch {}
-      await sleep(1);
+      try {  new Promise((r) => postTask(r)); } catch {}
+       sleep(1);
+      try { if (window.requestIdleCallback)  new Promise((r) => requestIdleCallback(r)); } catch {}
+       sleep(1);
+      try {  new Promise((r) => requestAnimationFrame(r)); } catch {}
+       sleep(1);
       resolve(true);
     });
 
@@ -232,13 +232,12 @@
     el.appendChild(codeElement);
 
     if (typeof Prism !== 'undefined') {
-      await Prism.highlightElement(codeElement);
+       Prism.highlightElement(codeElement);
     }
     el.dataset.prismDone = "true";
   };
 
   globalThis.runEnhancement = async () => {
-    if (!globalStore.glow) return;
 
     const consolePre = document.querySelector("pre.console-output");
     if (consolePre) {
