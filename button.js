@@ -13,13 +13,17 @@
 // @resource     PRISM_CSS https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css
 // ==/UserScript==
 
-(function () {
+(function() {
   "use strict";
 
   const globalStore = new Proxy({}, {
     get(_, key) {
       const val = localStorage.getItem(key);
-      try { return JSON.parse(val); } catch { return val; }
+      try {
+        return JSON.parse(val);
+      } catch {
+        return val;
+      }
     },
     set(_, key, value) {
       localStorage.setItem(key, JSON.stringify(value));
@@ -29,11 +33,19 @@
       localStorage.removeItem(key);
       return true;
     },
-    has(_, key) { return localStorage.getItem(key) !== null; },
-    ownKeys() { return Object.keys(localStorage); },
+    has(_, key) {
+      return localStorage.getItem(key) !== null;
+    },
+    ownKeys() {
+      return Object.keys(localStorage);
+    },
     getOwnPropertyDescriptor(_, key) {
       if (localStorage.getItem(key) === null) return undefined;
-      return { enumerable: true, configurable: true, writable: true };
+      return {
+        enumerable: true,
+        configurable: true,
+        writable: true
+      };
     }
   });
 
@@ -68,7 +80,10 @@
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   const postTask = (callback, options = {}) => {
     if (typeof scheduler !== 'undefined' && scheduler.postTask) {
-      return scheduler.postTask(callback, { priority: "background", ...options });
+      return scheduler.postTask(callback, {
+        priority: "background",
+        ...options
+      });
     }
     return setTimeout(callback, 0);
   };
@@ -76,11 +91,17 @@
   const waitNotBusy = () =>
     new Promise(async (resolve) => {
       await sleep(1);
-      try { await new Promise((r) => postTask(r)); } catch {}
+      try {
+        await new Promise((r) => postTask(r));
+      } catch {}
       await sleep(1);
-      try { if (window.requestIdleCallback) await new Promise((r) => requestIdleCallback(r)); } catch {}
+      try {
+        if (window.requestIdleCallback) await new Promise((r) => requestIdleCallback(r));
+      } catch {}
       await sleep(1);
-      try { await new Promise((r) => requestAnimationFrame(r)); } catch {}
+      try {
+        await new Promise((r) => requestAnimationFrame(r));
+      } catch {}
       await sleep(1);
       resolve(true);
     });
@@ -309,6 +330,8 @@
   if (document.readyState === "complete") {
     runloop();
   } else {
-    window.addEventListener("load", runloop, { once: true });
+    window.addEventListener("load", runloop, {
+      once: true
+    });
   }
 })();
