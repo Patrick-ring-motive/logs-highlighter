@@ -210,13 +210,16 @@
         if (regex.test(text)) {
           regex.lastIndex = 0;
           while ((match = regex.exec(text)) !== null) {
-            fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
-            const span = document.createElement("span");
-            span.className = symClass(match[0]);
-            span.textContent = match[0];
-            fragment.appendChild(span);
+            let subtext = text.substring(lastIndex, match.index);
+            if(subtext.length == subtext.split('').length){
+            fragment.appendChild(document.createTextNode(subtext));
+              const span = document.createElement("span");
+              span.className = symClass(match[0]);
+              span.textContent = match[0];
+              fragment.appendChild(span);
+              hasChanges = true;
+            }
             lastIndex = regex.lastIndex;
-            hasChanges = true;
           }
           fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
         }
