@@ -13,13 +13,17 @@
 // @resource     PRISM_CSS https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css
 // ==/UserScript==
 
-(function () {
+(function() {
   "use strict";
 
   const globalStore = new Proxy({}, {
     get(_, key) {
       const val = localStorage.getItem(key);
-      try { return JSON.parse(val); } catch { return val; }
+      try {
+        return JSON.parse(val);
+      } catch {
+        return val;
+      }
     },
     set(_, key, value) {
       localStorage.setItem(key, JSON.stringify(value));
@@ -29,11 +33,19 @@
       localStorage.removeItem(key);
       return true;
     },
-    has(_, key) { return localStorage.getItem(key) !== null; },
-    ownKeys() { return Object.keys(localStorage); },
+    has(_, key) {
+      return localStorage.getItem(key) !== null;
+    },
+    ownKeys() {
+      return Object.keys(localStorage);
+    },
     getOwnPropertyDescriptor(_, key) {
       if (localStorage.getItem(key) === null) return undefined;
-      return { enumerable: true, configurable: true, writable: true };
+      return {
+        enumerable: true,
+        configurable: true,
+        writable: true
+      };
     }
   });
 
@@ -68,7 +80,10 @@
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   const postTask = (callback, options = {}) => {
     if (typeof scheduler !== 'undefined' && scheduler.postTask) {
-      return scheduler.postTask(callback, { priority: "background", ...options });
+      return scheduler.postTask(callback, {
+        priority: "background",
+        ...options
+      });
     }
     return setTimeout(callback, 0);
   };
@@ -76,12 +91,18 @@
   const waitNotBusy = () =>
     new Promise(async (resolve) => {
       await sleep(1);
-      try {  new Promise((r) => postTask(r)); } catch {}
-       sleep(1);
-      try { if (window.requestIdleCallback)  new Promise((r) => requestIdleCallback(r)); } catch {}
-       sleep(1);
-      try {  new Promise((r) => requestAnimationFrame(r)); } catch {}
-       sleep(1);
+      try {
+        new Promise((r) => postTask(r));
+      } catch {}
+      sleep(1);
+      try {
+        if (window.requestIdleCallback) new Promise((r) => requestIdleCallback(r));
+      } catch {}
+      sleep(1);
+      try {
+        new Promise((r) => requestAnimationFrame(r));
+      } catch {}
+      sleep(1);
       resolve(true);
     });
 
@@ -158,112 +179,112 @@
       if ("[]‘’'".includes(ch)) return "sym-square";
       return "non-alpha";
     };
-    for(const _ of [...Array(4)]){
-    nodes.forEach((textNode) => {
-      if (!textNode.parentElement) return;
+    for (const _ of [...Array(4)]) {
+      nodes.forEach((textNode) => {
+        if (!textNode.parentElement) return;
 
-      let text = String(textNode.nodeValue).normalize("NFD");
-      const trimmed = text.trim();
+        let text = String(textNode.nodeValue).normalize("NFD");
+        const trimmed = text.trim();
 
-      if ((trimmed.startsWith("{") && trimmed.endsWith("}")) || (trimmed.startsWith("[") && trimmed.endsWith("]"))) {
-        try {
-          const parsed = JSON.parse(trimmed);
-          const pretty = JSON.stringify(parsed, null, 2);
-          if (pretty !== trimmed) {
-            textNode.nodeValue = pretty;
-            text = pretty;
-          }
-        } catch {}
-      }
+        if ((trimmed.startsWith("{") && trimmed.endsWith("}")) || (trimmed.startsWith("[") && trimmed.endsWith("]"))) {
+          try {
+            const parsed = JSON.parse(trimmed);
+            const pretty = JSON.stringify(parsed, null, 2);
+            if (pretty !== trimmed) {
+              textNode.nodeValue = pretty;
+              text = pretty;
+            }
+          } catch {}
+        }
 
-      // Safeguard: Mark the parent node so we never scan this exact text content again
-     // textNode.parentElement.dataset.colored = "true";
+        // Safeguard: Mark the parent node so we never scan this exact text content again
+        // textNode.parentElement.dataset.colored = "true";
 
-      let hasChanges = false;
-      const fragment = document.createDocumentFragment();
+        let hasChanges = false;
+        const fragment = document.createDocumentFragment();
 
-      // Combined or sequential breakdown that turns modifications into static entities
-      let lastIndex = 0;
-      let match;
-      regex.lastIndex = 0;
-
-      if (regex.test(text)) {
+        // Combined or sequential breakdown that turns modifications into static entities
+        let lastIndex = 0;
+        let match;
         regex.lastIndex = 0;
-        while ((match = regex.exec(text)) !== null) {
-          fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
-          const span = document.createElement("span");
-          span.className = symClass(match[0]);
-          span.textContent = match[0];
-          fragment.appendChild(span);
-          lastIndex = regex.lastIndex;
-          hasChanges = true;
+
+        if (regex.test(text)) {
+          regex.lastIndex = 0;
+          while ((match = regex.exec(text)) !== null) {
+            fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
+            const span = document.createElement("span");
+            span.className = symClass(match[0]);
+            span.textContent = match[0];
+            fragment.appendChild(span);
+            lastIndex = regex.lastIndex;
+            hasChanges = true;
+          }
+          fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
         }
-        fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
-      }
 
-      if (hasChanges) {
-        const nextNode = textNode.replaceWith(fragment);
-        return; // Break out early because textNode is replaced
-      }
-
-      if (yRegex.test(text)) {
-        yRegex.lastIndex = 0;
-        while ((match = yRegex.exec(text)) !== null) {
-          fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
-          const span = document.createElement("span");
-          span.className = 'highlight-yellow';
-          span.textContent = match[0];
-          fragment.appendChild(span);
-          lastIndex = yRegex.lastIndex;
-          hasChanges = true;
+        if (hasChanges) {
+          const nextNode = textNode.replaceWith(fragment);
+          return; // Break out early because textNode is replaced
         }
-        fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
-      }
 
-      if (hasChanges) {
-        const nextNode = textNode.replaceWith(fragment);
-        return; // Break out early because textNode is replaced
-      }
-
-      if (rRegex.test(text)) {
-        rRegex.lastIndex = 0;
-        while ((match = rRegex.exec(text)) !== null) {
-          fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
-          const span = document.createElement("span");
-          span.className = 'highlight-red';
-          span.textContent = match[0];
-          fragment.appendChild(span);
-          lastIndex = rRegex.lastIndex;
-          hasChanges = true;
+        if (yRegex.test(text)) {
+          yRegex.lastIndex = 0;
+          while ((match = yRegex.exec(text)) !== null) {
+            fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
+            const span = document.createElement("span");
+            span.className = 'highlight-yellow';
+            span.textContent = match[0];
+            fragment.appendChild(span);
+            lastIndex = yRegex.lastIndex;
+            hasChanges = true;
+          }
+          fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
         }
-        fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
-      }
 
-      if (hasChanges) {
-        const nextNode = textNode.replaceWith(fragment);
-        return; // Break out early because textNode is replaced
-      }
+        if (hasChanges) {
+          const nextNode = textNode.replaceWith(fragment);
+          return; // Break out early because textNode is replaced
+        }
 
-      lastIndex = 0;
-      numRegex.lastIndex = 0;
-      if (numRegex.test(text) && !/highlight-nums|number/.test(textNode.parentElement.className)) {
+        if (rRegex.test(text)) {
+          rRegex.lastIndex = 0;
+          while ((match = rRegex.exec(text)) !== null) {
+            fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
+            const span = document.createElement("span");
+            span.className = 'highlight-red';
+            span.textContent = match[0];
+            fragment.appendChild(span);
+            lastIndex = rRegex.lastIndex;
+            hasChanges = true;
+          }
+          fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
+        }
+
+        if (hasChanges) {
+          const nextNode = textNode.replaceWith(fragment);
+          return; // Break out early because textNode is replaced
+        }
+
+        lastIndex = 0;
         numRegex.lastIndex = 0;
-        while ((match = numRegex.exec(text)) !== null) {
-          fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
-          const span = document.createElement("span");
-          span.className = "highlight-nums";
-          span.textContent = match[0];
-          fragment.appendChild(span);
-          lastIndex = numRegex.lastIndex;
-          hasChanges = true;
+        if (numRegex.test(text) && !/highlight-nums|number/.test(textNode.parentElement.className)) {
+          numRegex.lastIndex = 0;
+          while ((match = numRegex.exec(text)) !== null) {
+            fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
+            const span = document.createElement("span");
+            span.className = "highlight-nums";
+            span.textContent = match[0];
+            fragment.appendChild(span);
+            lastIndex = numRegex.lastIndex;
+            hasChanges = true;
+          }
+          fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
         }
-        fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
-      }
 
-      if (hasChanges) {
-        textNode.replaceWith(fragment);
-      }
-    });
+        if (hasChanges) {
+          textNode.replaceWith(fragment);
+        }
+      });
     }
   };
 
@@ -278,28 +299,28 @@
     el.appendChild(codeElement);
 
     if (typeof Prism !== 'undefined') {
-       Prism.highlightElement(codeElement);
+      Prism.highlightElement(codeElement);
     }
     el.dataset.prismDone = "true";
   };
 
   globalThis.runEnhancement = async () => {
-   for(const _ of [...Array(4)]){
+    for (const _ of [...Array(4)]) {
       const consolePre = document.querySelector("pre.console-output");
       if (consolePre) {
         await applyPrism(consolePre);
       }
-  
+
       const targets = [
         ...document.querySelectorAll('.run-output, .run-output *, .react-code-text, code, [class*="log-viewer"], .yaml-editor, .CodeMirror-lines, pre, html:not([data-origin*="jenkins"]) a, time, td'),
         document.querySelector("cloudbees-log-viewer-main"),
         document.querySelector(".log-viewer-container"),
       ].filter(Boolean);
-  
+
       targets.forEach((target) => {
         if (target.shadowRoot) glowSymbols(target.shadowRoot);
         glowSymbols(target);
-  
+
         target.querySelectorAll("*").forEach((el) => {
           if (el.shadowRoot) glowSymbols(el.shadowRoot);
         });
