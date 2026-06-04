@@ -158,7 +158,7 @@
       if ("[]‘’'".includes(ch)) return "sym-square";
       return "non-alpha";
     };
-
+    for(const _ of [...Array(4)]){
     nodes.forEach((textNode) => {
       if (!textNode.parentElement) return;
 
@@ -264,6 +264,7 @@
         textNode.replaceWith(fragment);
       }
     });
+    }
   };
 
   const applyPrism = async (el) => {
@@ -283,25 +284,26 @@
   };
 
   globalThis.runEnhancement = async () => {
-
-    const consolePre = document.querySelector("pre.console-output");
-    if (consolePre) {
-      await applyPrism(consolePre);
-    }
-
-    const targets = [
-      ...document.querySelectorAll('.run-output, .run-output *, .react-code-text, code, [class*="log-viewer"], .yaml-editor, .CodeMirror-lines, pre, html:not([data-origin*="jenkins"]) a, time, td'),
-      document.querySelector("cloudbees-log-viewer-main"),
-      document.querySelector(".log-viewer-container"),
-    ].filter(Boolean);
-
-    targets.forEach((target) => {
-      if (target.shadowRoot) glowSymbols(target.shadowRoot);
-      glowSymbols(target);
-
-      target.querySelectorAll("*").forEach((el) => {
-        if (el.shadowRoot) glowSymbols(el.shadowRoot);
+   for(const _ of [...Array(4)]){
+      const consolePre = document.querySelector("pre.console-output");
+      if (consolePre) {
+        await applyPrism(consolePre);
+      }
+  
+      const targets = [
+        ...document.querySelectorAll('.run-output, .run-output *, .react-code-text, code, [class*="log-viewer"], .yaml-editor, .CodeMirror-lines, pre, html:not([data-origin*="jenkins"]) a, time, td'),
+        document.querySelector("cloudbees-log-viewer-main"),
+        document.querySelector(".log-viewer-container"),
+      ].filter(Boolean);
+  
+      targets.forEach((target) => {
+        if (target.shadowRoot) glowSymbols(target.shadowRoot);
+        glowSymbols(target);
+  
+        target.querySelectorAll("*").forEach((el) => {
+          if (el.shadowRoot) glowSymbols(el.shadowRoot);
+        });
       });
-    });
+    }
   };
 })();
