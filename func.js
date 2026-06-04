@@ -139,7 +139,7 @@
             line-height: 1.5 !important;
         }
         .non-alpha { color: #00ff00 !important; text-shadow: -1px -1px 0 ${textShadow}, 1px -1px 0 ${textShadow}, -1px 1px 0 ${textShadow}, 1px 1px 0 ${textShadow}; }
-        .sym-paren  { color: #ffff00 !important; text-shadow: -1px -1px 0 ${textShadow}, 1px -1px 0 ${textShadow}, -1px 1px 0 ${textShadow}, 1px 1px 0 ${textShadow}; }
+        .sym-paren  { color: orange !important; text-shadow: -1px -1px 0 ${textShadow}, 1px -1px 0 ${textShadow}, -1px 1px 0 ${textShadow}, 1px 1px 0 ${textShadow}; }
         .sym-curly  { color: #ff79c6 !important; text-shadow: -1px -1px 0 ${textShadow}, 1px -1px 0 ${textShadow}, -1px 1px 0 ${textShadow}, 1px 1px 0 ${textShadow}; }
         .sym-square { color: #ba7dff !important; text-shadow: -1px -1px 0 ${textShadow}, 1px -1px 0 ${textShadow}, -1px 1px 0 ${textShadow}, 1px 1px 0 ${textShadow}; }
         .highlight-nums { color: deepskyblue !important; text-shadow: -1px -1px 0 ${textShadow}, 1px -1px 0 ${textShadow}, -1px 1px 0 ${textShadow}, 1px 1px 0 ${textShadow}; }
