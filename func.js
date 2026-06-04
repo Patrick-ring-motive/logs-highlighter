@@ -133,8 +133,6 @@
       if (
         parent?.tagName === "SCRIPT" ||
         parent?.tagName === "STYLE" ||
-        parent?.closest('.non-alpha, .sym-paren, .sym-curly, .sym-square, .highlight-nums') || // Prevent reprocessing children of mutation spans
-        parent?.dataset?.colored ||
         matchesNode(node, `[contenteditable="true"],[contenteditable="true"] *`) ||
         isFocus(node)
       ) continue;
@@ -169,7 +167,7 @@
       }
 
       // Safeguard: Mark the parent node so we never scan this exact text content again
-      textNode.parentElement.dataset.colored = "true";
+     // textNode.parentElement.dataset.colored = "true";
 
       let hasChanges = false;
       const fragment = document.createDocumentFragment();
@@ -198,7 +196,6 @@
         return; // Break out early because textNode is replaced
       }
 
-      // Fallback to numbers processing if no symbols matched
       lastIndex = 0;
       numRegex.lastIndex = 0;
       if (numRegex.test(text) && !/highlight-nums|number/.test(textNode.parentElement.className)) {
