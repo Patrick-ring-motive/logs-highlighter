@@ -104,8 +104,8 @@
   const textShadow = `rgba(0,0,0,1)`;
   addStyle(`
     @media (prefers-color-scheme: light){
-      pre *{
-          text-shadow:none !important; 
+      pre,pre *{
+          text-shadow: -1px -1px 0 grey, 1px -1px 0 grey, -1px 1px 0 grey, 1px 1px 0 grey !important; 
       }
     }
   
@@ -122,6 +122,8 @@
         .sym-curly  { color: #ff79c6 !important; text-shadow: -1px -1px 0 ${textShadow}, 1px -1px 0 ${textShadow}, -1px 1px 0 ${textShadow}, 1px 1px 0 ${textShadow}; }
         .sym-square { color: #ba7dff !important; text-shadow: -1px -1px 0 ${textShadow}, 1px -1px 0 ${textShadow}, -1px 1px 0 ${textShadow}, 1px 1px 0 ${textShadow}; }
         .highlight-nums { color: deepskyblue !important; text-shadow: -1px -1px 0 ${textShadow}, 1px -1px 0 ${textShadow}, -1px 1px 0 ${textShadow}, 1px 1px 0 ${textShadow}; }
+        .highlight-yellow { color: yellow !important; text-shadow: -1px -1px 0 ${textShadow}, 1px -1px 0 ${textShadow}, -1px 1px 0 ${textShadow}, 1px 1px 0 ${textShadow}; }
+        .highlight-red { color: red !important; text-shadow: -1px -1px 0 ${textShadow}, 1px -1px 0 ${textShadow}, -1px 1px 0 ${textShadow}, 1px 1px 0 ${textShadow}; }
         .token.string { color: #e6db74 !important; }
         .token.comment { color: #75715e !important; }
         code, pre>code[class*=language-] { color: powderblue !important; text-shadow: -1px -1px 0 ${textShadow}, 1px -1px 0 ${textShadow}, -1px 1px 0 ${textShadow}, 1px 1px 0 ${textShadow} !important; }
@@ -147,6 +149,8 @@
 
     const regex = /([^a-zA-Z0-9\s])/g;
     const numRegex = /([0-9]+)/g;
+    const yRegex = /(\sY\s)/g;
+    const rRegex = /(\sR\s)/g;
 
     const symClass = (ch) => {
       if ('()“”"'.includes(ch)) return "sym-paren";
@@ -192,6 +196,44 @@
           span.textContent = match[0];
           fragment.appendChild(span);
           lastIndex = regex.lastIndex;
+          hasChanges = true;
+        }
+        fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
+      }
+
+      if (hasChanges) {
+        const nextNode = textNode.replaceWith(fragment);
+        return; // Break out early because textNode is replaced
+      }
+
+      if (yRegex.test(text)) {
+        yRegex.lastIndex = 0;
+        while ((match = yRegex.exec(text)) !== null) {
+          fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
+          const span = document.createElement("span");
+          span.className = 'highlight-yellow';
+          span.textContent = match[0];
+          fragment.appendChild(span);
+          lastIndex = yRegex.lastIndex;
+          hasChanges = true;
+        }
+        fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
+      }
+
+      if (hasChanges) {
+        const nextNode = textNode.replaceWith(fragment);
+        return; // Break out early because textNode is replaced
+      }
+
+      if (rRegex.test(text)) {
+        rRegex.lastIndex = 0;
+        while ((match = rRegex.exec(text)) !== null) {
+          fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
+          const span = document.createElement("span");
+          span.className = 'highlight-red';
+          span.textContent = match[0];
+          fragment.appendChild(span);
+          lastIndex = rRegex.lastIndex;
           hasChanges = true;
         }
         fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
