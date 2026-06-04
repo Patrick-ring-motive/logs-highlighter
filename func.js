@@ -105,7 +105,7 @@
   addStyle(`
     @media (prefers-color-scheme: light){
       pre,pre *{
-          text-shadow: -1px -1px 0 grey, 1px -1px 0 grey, -1px 1px 0 grey, 1px 1px 0 grey !important; 
+          text-shadow: -.1ch -.1ch 0 grey, .1ch -.1ch 0 grey, -.1ch .1ch 0 grey, .1ch .1ch 0 grey !important;
       }
     }
   
