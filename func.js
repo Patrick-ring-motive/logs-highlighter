@@ -168,7 +168,7 @@
       nodes.push(node);
     }
 
-    const regex = /([^a-zA-Z0-9\s])/g;
+    const regex = /([^a-zA-Z0-9\s]+)/g;
     const numRegex = /([0-9]+)/g;
     const yRegex = /(\bY\b)/g;
     const rRegex = /(\bR\b)/g;
@@ -210,7 +210,7 @@
         if (regex.test(text)) {
           regex.lastIndex = 0;
           while ((match = regex.exec(text)) !== null) {
-            let subtext = text.substring(lastIndex, match.index);
+            let subtext = text.substring(lastIndex, match.index).replace('🧇'.split('').join(''),'🧇');
             if(subtext.length == subtext.split('').length){
             fragment.appendChild(document.createTextNode(subtext));
               const span = document.createElement("span");
