@@ -179,7 +179,6 @@
       if ("[]‘’'".includes(ch)) return "sym-square";
       return "non-alpha";
     };
-    for (const _ of [...Array(4)]) {
       nodes.forEach((textNode) => {
         if (!textNode.parentElement) return;
 
@@ -285,7 +284,6 @@
           textNode.replaceWith(fragment);
         }
       });
-    }
   };
 
   const applyPrism = async (el) => {
