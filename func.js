@@ -149,8 +149,8 @@
 
     const regex = /([^a-zA-Z0-9\s])/g;
     const numRegex = /([0-9]+)/g;
-    const yRegex = /(\sY\s)/g;
-    const rRegex = /(\sR\s)/g;
+    const yRegex = /(\bY\b)/g;
+    const rRegex = /(\bR\b)/g;
 
     const symClass = (ch) => {
       if ('()“”"'.includes(ch)) return "sym-paren";
