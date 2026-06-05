@@ -235,7 +235,10 @@
         if (yRegex.test(text) &&!/highlight-yellow/.test(textNode.parentElement.className)) {
           yRegex.lastIndex = 0;
           while ((match = yRegex.exec(text)) !== null) {
-            fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
+            let subtext = text.substring(lastIndex, match.index);
+            const pretext = document.createElement('span');
+            pretext.appendChild(document.createTextNode(subtext));
+            fragment.appendChild(pretext);
             const span = document.createElement("span");
             span.className = 'highlight-yellow';
             span.textContent = match[0];
@@ -254,7 +257,10 @@
         if (rRegex.test(text) && !/highlight-red/.test(textNode.parentElement.className)) {
           rRegex.lastIndex = 0;
           while ((match = rRegex.exec(text)) !== null) {
-            fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
+            let subtext = text.substring(lastIndex, match.index);
+            const pretext = document.createElement('span');
+            pretext.appendChild(document.createTextNode(subtext));
+            fragment.appendChild(pretext);
             const span = document.createElement("span");
             span.className = 'highlight-red';
             span.textContent = match[0];
@@ -275,7 +281,10 @@
         if (numRegex.test(text) && !/highlight-nums|number/.test(textNode.parentElement.className)) {
           numRegex.lastIndex = 0;
           while ((match = numRegex.exec(text)) !== null) {
-            fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
+            let subtext = text.substring(lastIndex, match.index);
+            const pretext = document.createElement('span');
+            pretext.appendChild(document.createTextNode(subtext));
+            fragment.appendChild(pretext);
             const span = document.createElement("span");
             span.className = "highlight-nums";
             span.textContent = match[0];
