@@ -162,6 +162,7 @@
       if (
         parent?.tagName === "SCRIPT" ||
         parent?.tagName === "STYLE" ||
+        parent?.getAttribute?.('class')?.includes?.('highlight') ||
         parent?.classList?.contains?.("non-alpha") ||
         matchesNode(node, `[contenteditable="true"],[contenteditable="true"] *`) ||
         isFocus(node)
