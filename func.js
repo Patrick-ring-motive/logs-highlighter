@@ -307,6 +307,7 @@
 
   globalThis.runEnhancement = async () => {
     for (const _ of [...Array(4)]) {
+      await waitNotBusy();
       const consolePre = document.querySelector("pre.console-output");
       if (consolePre) {
         await applyPrism(consolePre);
