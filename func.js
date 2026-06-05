@@ -213,7 +213,9 @@
           while ((match = regex.exec(text)) !== null) {
             let subtext = text.substring(lastIndex, match.index);
             if(subtext.length == subtext.split('').length){
-            fragment.appendChild(document.createTextNode(subtext));
+              const pretext = document.createElement('span');
+              pretext.appendChild(document.createTextNode(subtext));
+              fragment.appendChild(pretext);
               const span = document.createElement("span");
               span.className = symClass(match[0]);
               span.textContent = match[0];
@@ -315,7 +317,7 @@
       }
 
       const targets = [
-        ...document.querySelectorAll('.run-output, .run-output *, .react-code-text, code, [class*="log-viewer"], .yaml-editor, .CodeMirror-lines, pre:not(:has(*)),pre *:not(:has(*)), pre>span:last-child, html:not([data-origin*="jenkins"]) a, time, td'),
+        ...document.querySelectorAll('.run-output, .run-output *, .react-code-text, code, [class*="log-viewer"], .yaml-editor, .CodeMirror-lines, pre:not(:has(*)),pre *:not(:has(*)), html:not([data-origin*="jenkins"]) a, time, td'),
         document.querySelector("cloudbees-log-viewer-main"),
         document.querySelector(".log-viewer-container"),
       ].filter(Boolean);
