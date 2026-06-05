@@ -169,7 +169,7 @@
       nodes.push(node);
     }
 
-    const regex = /([^a-zA-Z0-9\s]+)/g;
+    const regex = /([\[\]\{\}\(\)“”"‘’'"]|[^a-zA-Z0-9\s\[\]\{\}\(\)“”"‘’'"]+)/g;
     const numRegex = /([0-9]+)/g;
     const yRegex = /(\bY\b)/g;
     const rRegex = /(\bR\b)/g;
@@ -307,8 +307,8 @@
   };
 
   globalThis.runEnhancement = async () => {
+    await waitNotBusy();
     for (const _ of [...Array(4)]) {
-      await waitNotBusy();
       const consolePre = document.querySelector("pre.console-output");
       if (consolePre) {
         await applyPrism(consolePre);
