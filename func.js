@@ -225,7 +225,7 @@
             lastIndex = regex.lastIndex;
           }
               const posttext = document.createElement('span');
-              posttext.appendChild(text.substring(lastIndex));
+              posttext.appendChild(document.createTextNode(text.substring(lastIndex)));
               fragment.appendChild(posttext);
           
         }
@@ -249,8 +249,8 @@
             lastIndex = yRegex.lastIndex;
             hasChanges = true;
           }
-                      const posttext = document.createElement('span');
-              posttext.appendChild(text.substring(lastIndex));
+              const posttext = document.createElement('span');
+              posttext.appendChild(document.createTextNode(text.substring(lastIndex)));
               fragment.appendChild(posttext);
         }
 
@@ -274,7 +274,7 @@
             hasChanges = true;
           }
                         const posttext = document.createElement('span');
-              posttext.appendChild(text.substring(lastIndex));
+              posttext.appendChild(document.createTextNode(text.substring(lastIndex)));
               fragment.appendChild(posttext);
         }
 
@@ -300,7 +300,7 @@
             hasChanges = true;
           }
                         const posttext = document.createElement('span');
-              posttext.appendChild(text.substring(lastIndex));
+              posttext.appendChild(document.createTextNode(text.substring(lastIndex)));
               fragment.appendChild(posttext);;
         }
 
