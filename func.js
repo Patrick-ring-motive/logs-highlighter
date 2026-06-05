@@ -317,7 +317,7 @@
       }
 
       const targets = [
-        ...document.querySelectorAll('.run-output, .run-output *, .react-code-text, code, [class*="log-viewer"], .yaml-editor, .CodeMirror-lines, pre:not(:has(*)),pre *:not(:has(*)), html:not([data-origin*="jenkins"]) a, time, td'),
+        ...document.querySelectorAll('.run-output, .run-output *, .react-code-text, code, [class*="log-viewer"], .yaml-editor, .CodeMirror-lines, pre:not(:has(*)),pre :not(.non-alpha,.highlight-nums,:has(*)), html:not([data-origin*="jenkins"]) a, time, td'),
         document.querySelector("cloudbees-log-viewer-main"),
         document.querySelector(".log-viewer-container"),
       ].filter(Boolean);
