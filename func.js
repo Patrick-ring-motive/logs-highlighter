@@ -162,6 +162,7 @@
       if (
         parent?.tagName === "SCRIPT" ||
         parent?.tagName === "STYLE" ||
+        parent?.classList?.contains?.("non-alpha") ||
         matchesNode(node, `[contenteditable="true"],[contenteditable="true"] *`) ||
         isFocus(node)
       ) continue;
@@ -210,7 +211,7 @@
         if (regex.test(text)) {
           regex.lastIndex = 0;
           while ((match = regex.exec(text)) !== null) {
-            let subtext = text.substring(lastIndex, match.index).replace('🧇'.split('').join(''),'🧇');
+            let subtext = text.substring(lastIndex, match.index);
             if(subtext.length == subtext.split('').length){
             fragment.appendChild(document.createTextNode(subtext));
               const span = document.createElement("span");
@@ -229,7 +230,7 @@
           return; // Break out early because textNode is replaced
         }
 
-        if (yRegex.test(text)) {
+        if (yRegex.test(text) &&!/highlight-yellow/.test(textNode.parentElement.className)) {
           yRegex.lastIndex = 0;
           while ((match = yRegex.exec(text)) !== null) {
             fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
@@ -248,7 +249,7 @@
           return; // Break out early because textNode is replaced
         }
 
-        if (rRegex.test(text)) {
+        if (rRegex.test(text) && !/highlight-red/.test(textNode.parentElement.className)) {
           rRegex.lastIndex = 0;
           while ((match = rRegex.exec(text)) !== null) {
             fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
