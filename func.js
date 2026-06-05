@@ -321,7 +321,14 @@
       ].filter(Boolean);
 
       targets.forEach((target) => {
-        if (target.shadowRoot) glowSymbols(target.shadowRoot);
+        if (target.shadowRoot) 
+        glowSymbols(target.shadowRoot);
+        glowSymbols(target);
+        glowSymbols(target.shadowRoot);
+        glowSymbols(target);
+        glowSymbols(target.shadowRoot);
+        glowSymbols(target);
+        glowSymbols(target.shadowRoot);
         glowSymbols(target);
 
         target.querySelectorAll("*").forEach((el) => {
