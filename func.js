@@ -181,134 +181,134 @@
       if ("[]‘’'".includes(ch)) return "sym-square";
       return "non-alpha";
     };
-      nodes.forEach((textNode) => {
-        if (!textNode.parentElement) return;
+    nodes.forEach((textNode) => {
+      if (!textNode.parentElement) return;
 
-        let text = String(textNode.nodeValue).normalize("NFD");
-        const trimmed = text.trim();
+      let text = String(textNode.nodeValue).normalize("NFD");
+      const trimmed = text.trim();
 
-        if ((trimmed.startsWith("{") && trimmed.endsWith("}")) || (trimmed.startsWith("[") && trimmed.endsWith("]"))) {
-          try {
-            const parsed = JSON.parse(trimmed);
-            const pretty = JSON.stringify(parsed, null, 2);
-            if (pretty !== trimmed) {
-              textNode.nodeValue = pretty;
-              text = pretty;
-            }
-          } catch {}
-        }
+      if ((trimmed.startsWith("{") && trimmed.endsWith("}")) || (trimmed.startsWith("[") && trimmed.endsWith("]"))) {
+        try {
+          const parsed = JSON.parse(trimmed);
+          const pretty = JSON.stringify(parsed, null, 2);
+          if (pretty !== trimmed) {
+            textNode.nodeValue = pretty;
+            text = pretty;
+          }
+        } catch {}
+      }
 
-        // Safeguard: Mark the parent node so we never scan this exact text content again
-        // textNode.parentElement.dataset.colored = "true";
+      // Safeguard: Mark the parent node so we never scan this exact text content again
+      // textNode.parentElement.dataset.colored = "true";
 
-        let hasChanges = false;
-        const fragment = document.createDocumentFragment();
+      let hasChanges = false;
+      const fragment = document.createDocumentFragment();
 
-        // Combined or sequential breakdown that turns modifications into static entities
-        let lastIndex = 0;
-        let match;
+      // Combined or sequential breakdown that turns modifications into static entities
+      let lastIndex = 0;
+      let match;
+      regex.lastIndex = 0;
+
+      if (regex.test(text)) {
         regex.lastIndex = 0;
-
-        if (regex.test(text)) {
-          regex.lastIndex = 0;
-          while ((match = regex.exec(text)) !== null) {
-            let subtext = text.substring(lastIndex, match.index);
-            if(subtext.length == subtext.split('').length){
-              const pretext = document.createElement('span');
-              pretext.appendChild(document.createTextNode(subtext));
-              fragment.appendChild(pretext);
-              const span = document.createElement("span");
-              span.className = symClass(match[0]);
-              span.textContent = match[0];
-              fragment.appendChild(span);
-              hasChanges = true;
-            }
-            lastIndex = regex.lastIndex;
-          }
-              const posttext = document.createElement('span');
-              posttext.appendChild(document.createTextNode(text.substring(lastIndex)));
-              fragment.appendChild(posttext);
-          
-        }
-
-        if (hasChanges) {
-          const nextNode = textNode.replaceWith(fragment);
-          return; // Break out early because textNode is replaced
-        }
-
-        if (yRegex.test(text) &&!/highlight-yellow/.test(textNode.parentElement.className)) {
-          yRegex.lastIndex = 0;
-          while ((match = yRegex.exec(text)) !== null) {
-            let subtext = text.substring(lastIndex, match.index);
+        while ((match = regex.exec(text)) !== null) {
+          let subtext = text.substring(lastIndex, match.index);
+          if (subtext.length == subtext.split('').length) {
             const pretext = document.createElement('span');
             pretext.appendChild(document.createTextNode(subtext));
             fragment.appendChild(pretext);
             const span = document.createElement("span");
-            span.className = 'highlight-yellow';
+            span.className = symClass(match[0]);
             span.textContent = match[0];
             fragment.appendChild(span);
-            lastIndex = yRegex.lastIndex;
             hasChanges = true;
           }
-              const posttext = document.createElement('span');
-              posttext.appendChild(document.createTextNode(text.substring(lastIndex)));
-              fragment.appendChild(posttext);
+          lastIndex = regex.lastIndex;
         }
+        const posttext = document.createElement('span');
+        posttext.appendChild(document.createTextNode(text.substring(lastIndex)));
+        fragment.appendChild(posttext);
 
-        if (hasChanges) {
-          const nextNode = textNode.replaceWith(fragment);
-          return; // Break out early because textNode is replaced
+      }
+
+      if (hasChanges) {
+        const nextNode = textNode.replaceWith(fragment);
+        return; // Break out early because textNode is replaced
+      }
+
+      if (yRegex.test(text) && !/highlight-yellow/.test(textNode.parentElement.className)) {
+        yRegex.lastIndex = 0;
+        while ((match = yRegex.exec(text)) !== null) {
+          let subtext = text.substring(lastIndex, match.index);
+          const pretext = document.createElement('span');
+          pretext.appendChild(document.createTextNode(subtext));
+          fragment.appendChild(pretext);
+          const span = document.createElement("span");
+          span.className = 'highlight-yellow';
+          span.textContent = match[0];
+          fragment.appendChild(span);
+          lastIndex = yRegex.lastIndex;
+          hasChanges = true;
         }
+        const posttext = document.createElement('span');
+        posttext.appendChild(document.createTextNode(text.substring(lastIndex)));
+        fragment.appendChild(posttext);
+      }
 
-        if (rRegex.test(text) && !/highlight-red/.test(textNode.parentElement.className)) {
-          rRegex.lastIndex = 0;
-          while ((match = rRegex.exec(text)) !== null) {
-            let subtext = text.substring(lastIndex, match.index);
-            const pretext = document.createElement('span');
-            pretext.appendChild(document.createTextNode(subtext));
-            fragment.appendChild(pretext);
-            const span = document.createElement("span");
-            span.className = 'highlight-red';
-            span.textContent = match[0];
-            fragment.appendChild(span);
-            lastIndex = rRegex.lastIndex;
-            hasChanges = true;
-          }
-                        const posttext = document.createElement('span');
-              posttext.appendChild(document.createTextNode(text.substring(lastIndex)));
-              fragment.appendChild(posttext);
+      if (hasChanges) {
+        const nextNode = textNode.replaceWith(fragment);
+        return; // Break out early because textNode is replaced
+      }
+
+      if (rRegex.test(text) && !/highlight-red/.test(textNode.parentElement.className)) {
+        rRegex.lastIndex = 0;
+        while ((match = rRegex.exec(text)) !== null) {
+          let subtext = text.substring(lastIndex, match.index);
+          const pretext = document.createElement('span');
+          pretext.appendChild(document.createTextNode(subtext));
+          fragment.appendChild(pretext);
+          const span = document.createElement("span");
+          span.className = 'highlight-red';
+          span.textContent = match[0];
+          fragment.appendChild(span);
+          lastIndex = rRegex.lastIndex;
+          hasChanges = true;
         }
+        const posttext = document.createElement('span');
+        posttext.appendChild(document.createTextNode(text.substring(lastIndex)));
+        fragment.appendChild(posttext);
+      }
 
-        if (hasChanges) {
-          const nextNode = textNode.replaceWith(fragment);
-          return; // Break out early because textNode is replaced
-        }
+      if (hasChanges) {
+        const nextNode = textNode.replaceWith(fragment);
+        return; // Break out early because textNode is replaced
+      }
 
-        lastIndex = 0;
+      lastIndex = 0;
+      numRegex.lastIndex = 0;
+      if (numRegex.test(text) && !/highlight-nums|number/.test(textNode.parentElement.className)) {
         numRegex.lastIndex = 0;
-        if (numRegex.test(text) && !/highlight-nums|number/.test(textNode.parentElement.className)) {
-          numRegex.lastIndex = 0;
-          while ((match = numRegex.exec(text)) !== null) {
-            let subtext = text.substring(lastIndex, match.index);
-            const pretext = document.createElement('span');
-            pretext.appendChild(document.createTextNode(subtext));
-            fragment.appendChild(pretext);
-            const span = document.createElement("span");
-            span.className = "highlight-nums";
-            span.textContent = match[0];
-            fragment.appendChild(span);
-            lastIndex = numRegex.lastIndex;
-            hasChanges = true;
-          }
-                        const posttext = document.createElement('span');
-              posttext.appendChild(document.createTextNode(text.substring(lastIndex)));
-              fragment.appendChild(posttext);;
+        while ((match = numRegex.exec(text)) !== null) {
+          let subtext = text.substring(lastIndex, match.index);
+          const pretext = document.createElement('span');
+          pretext.appendChild(document.createTextNode(subtext));
+          fragment.appendChild(pretext);
+          const span = document.createElement("span");
+          span.className = "highlight-nums";
+          span.textContent = match[0];
+          fragment.appendChild(span);
+          lastIndex = numRegex.lastIndex;
+          hasChanges = true;
         }
+        const posttext = document.createElement('span');
+        posttext.appendChild(document.createTextNode(text.substring(lastIndex)));
+        fragment.appendChild(posttext);;
+      }
 
-        if (hasChanges) {
-          textNode.replaceWith(fragment);
-        }
-      });
+      if (hasChanges) {
+        textNode.replaceWith(fragment);
+      }
+    });
   };
 
   const applyPrism = async (el) => {
@@ -342,8 +342,8 @@
       ].filter(Boolean);
 
       targets.forEach((target) => {
-        if (target.shadowRoot) 
-        glowSymbols(target.shadowRoot);
+        if (target.shadowRoot)
+          glowSymbols(target.shadowRoot);
         glowSymbols(target);
 
         target.querySelectorAll("*").forEach((el) => {
